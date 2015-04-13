@@ -17,22 +17,25 @@ RSpec.configure do |config|
     end
   end
 
+  config.around(:each, type: :request) do |example|
+    example_group = example.metadata[:example_group]
+    example_groups = []
+
+    while example_group
+      example_groups << example_group
+      example_group = example_group[:example_group]
+    end
+
+    @action = example_groups[-2][:description_args].first if example_groups[-2]
+    /(\w+)\sRequests/ === example_groups[-1][:description_args].first
+    @file_name = $1.underscore if $1
+    example.run
+  end
+
   config.after(:each, type: :request) do
-    response ||= last_response
-    request ||= last_request
-
     if response
-      example_group = example.metadata[:example_group]
-      example_groups = []
-
-      while example_group
-        example_groups << example_group
-        example_group = example_group[:example_group]
-      end
-
-      action = example_groups[-2][:description_args].first if example_groups[-2]
-      example_groups[-1][:description_args].first.match(/(\w+)\sRequests/)
-      file_name = $1.underscore
+      file_name = @file_name
+      action = @action
 
       if defined? Rails
         file = File.join(Rails.root, "/api_docs/#{file_name}.txt")
@@ -58,7 +61,7 @@ RSpec.configure do |config|
           end
 
           # Request Body
-          if request_body.present? && request.content_type == 'application/json'
+          if request_body.present? && 'application/json' == request.content_type.to_s
             f.write "+ Body\n\n".indent(4) if authorization_header
             f.write "#{JSON.pretty_generate(JSON.parse(request_body))}\n\n".indent(authorization_header ? 12 : 8)
           end
@@ -66,8 +69,7 @@ RSpec.configure do |config|
 
         # Response
         f.write "+ Response #{response.status} #{response.content_type}\n\n"
-
-        if response.body.present? && response.content_type =~ /application\/json/
+        if response.body.present? && /application\/json/ === response.content_type.to_s
           f.write "#{JSON.pretty_generate(JSON.parse(response.body))}\n\n".indent(8)
         end
       end unless response.status == 401 || response.status == 403 || response.status == 301
