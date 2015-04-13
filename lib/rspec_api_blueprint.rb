@@ -26,49 +26,41 @@ RSpec.configure do |config|
       example_group = example_group[:example_group]
     end
 
-    @action = example_groups[-2][:description_args].first if example_groups[-2]
-    /(\w+)\sRequests/ === example_groups[-1][:description_args].first
-    @file_name = $1.underscore if $1
+    action = example_groups[-2][:description_args].first if example_groups[-2]
+    group_name = example_groups[-1][:description_args].first
+    file_name = group_name.underscore
+    if defined? Rails
+      @file = File.join(Rails.root, "/api_docs/#{file_name}.txt")
+    else
+      @file = File.join(File.expand_path('.'), "/api_docs/#{file_name}.txt")
+    end
+    
+    File.open(@file, 'a') do |f|
+      f.write "# #{group_name}"
+      f.write "## #{action}\n\n" if action
+    end
+    
     example.run
   end
 
   config.after(:each, type: :request) do
     if response
-      file_name = @file_name
       action = @action
 
-      if defined? Rails
-        file = File.join(Rails.root, "/api_docs/#{file_name}.txt")
-      else
-        file = File.join(File.expand_path('.'), "/api_docs/#{file_name}.txt")
-      end
-
       File.open(file, 'a') do |f|
-        # Resource & Action
-        f.write "# #{action}\n\n"
-
         # Request
         request_body = request.body.read
-        authorization_header = request.env ? request.env['Authorization'] : request.headers['Authorization']
-
-        if request_body.present? || authorization_header.present?
-          f.write "+ Request #{request.content_type}\n\n"
-
-          # Request Headers
-          if authorization_header.present?
-            f.write "+ Headers\n\n".indent(4)
-            f.write "Authorization: #{authorization_header}\n\n".indent(12)
-          end
+        if request_body.present? 
+          f.write "+ Request (#{request.content_type})\n\n"
 
           # Request Body
           if request_body.present? && 'application/json' == request.content_type.to_s
-            f.write "+ Body\n\n".indent(4) if authorization_header
             f.write "#{JSON.pretty_generate(JSON.parse(request_body))}\n\n".indent(authorization_header ? 12 : 8)
           end
         end
 
         # Response
-        f.write "+ Response #{response.status} #{response.content_type}\n\n"
+        f.write "+ Response #{response.status} (#{response.content_type})\n\n"
         if response.body.present? && /application\/json/ === response.content_type.to_s
           f.write "#{JSON.pretty_generate(JSON.parse(response.body))}\n\n".indent(8)
         end
