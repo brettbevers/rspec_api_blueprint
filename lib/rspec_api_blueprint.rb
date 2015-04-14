@@ -16,7 +16,7 @@ RSpec.configure do |config|
     end
   end
 
-  config.around(:each, type: :request) do |example|
+  config.around(:each, type: :request, api_docs: true) do |example|
     example_group = example.metadata[:example_group]
     example_groups = []
     while example_group
@@ -37,7 +37,7 @@ RSpec.configure do |config|
     example.run
   end
 
-  config.after(:each, type: :request) do
+  config.after(:each, type: :request, api_docs: true) do
     break if response.nil? || response.status == 401 || response.status == 403 || response.status == 301
 
     File.open(@file, 'a') do |f|
