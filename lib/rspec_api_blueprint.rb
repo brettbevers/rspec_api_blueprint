@@ -80,7 +80,7 @@ RSpec.configure do |config|
       f.write "+ Headers\n\n".indent(4)
         response.headers.each do |k,v| 
           next if /Content-Type/i === k
-          f.write "#{k}: #{v}\n\n".indent(12)
+          f.write "#{k}: #{v.gsub(/\n+/, ' ')}\n\n".indent(12)
         end
       # Response Body
       f.write "+ Body\n\n".indent(4)
