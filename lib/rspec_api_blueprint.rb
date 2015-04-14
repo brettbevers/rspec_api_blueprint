@@ -76,12 +76,15 @@ RSpec.configure do |config|
 
       # Response
       f.write "+ Response #{response.status} (#{response.content_type})\n\n"
-      if response.headers.any?
-        f.write "+ Headers\n\n".indent(4)
-        response.headers.each { |k,v| f.write "#{k}: #{v}\n\n".indent(12) }
-      end
+      # Response Headers
+      f.write "+ Headers\n\n".indent(4)
+        response.headers.each do |k,v| 
+          next if /Content-Type/i === k
+          f.write "#{k}: #{v}\n\n".indent(12)
+        end
+      # Response Body
+      f.write "+ Body\n\n".indent(4)
       if response.body.present?
-        f.write "+ Body".indent(4)
         if /application\/json/ === response.content_type.to_s
           f.write "#{JSON.pretty_generate(JSON.parse(response.body))}\n\n".indent(12)
         else
