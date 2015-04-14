@@ -68,7 +68,6 @@ RSpec.configure do |config|
       request_body = request.body.read
       if request_body.present? 
         f.write "+ Request (#{request.content_type})\n\n"
-
         # Request Body
         if request_body.present? && 'application/json' == request.content_type.to_s
           f.write "#{JSON.pretty_generate(JSON.parse(request_body))}\n\n".indent(8)
@@ -77,8 +76,17 @@ RSpec.configure do |config|
 
       # Response
       f.write "+ Response #{response.status} (#{response.content_type})\n\n"
-      if response.body.present? && /application\/json/ === response.content_type.to_s
-        f.write "#{JSON.pretty_generate(JSON.parse(response.body))}\n\n".indent(8)
+      if response.headers.any?
+        f.write "+ Headers\n\n".indent(4)
+        response.headers.each { |k,v| f.write "#{k}: #{v}\n\n".indent(12) }
+      end
+      if response.body.present?
+        f.write "+ Body".indent(4)
+        if /application\/json/ === response.content_type.to_s
+          f.write "#{JSON.pretty_generate(JSON.parse(response.body))}\n\n".indent(12)
+        else
+          f.write "response.body".indent(12)
+        end  
       end
     end
   end
