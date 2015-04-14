@@ -40,7 +40,7 @@ RSpec.configure do |config|
   end
 
   config.after(:each, type: :request) do
-    unless response.nil? || response.status == 401 || response.status == 403 || response.status == 301
+    break if response.nil? || response.status == 401 || response.status == 403 || response.status == 301
 
     File.open(@file, 'a') do |f|
       unless $header_written
