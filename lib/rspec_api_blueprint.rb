@@ -56,15 +56,18 @@ RSpec.configure do |config|
       if @level_3
         resource_level = '###'
         action_level = '####'
+        RESOURCE_REGEXP === @level_3
       elsif @level_2
         resource_level = '##'
         action_level = '###'
+        RESOURCE_REGEXP === @level_2
       else
         resource_level = '#'
         action_level = '##'
+        RESOURCE_REGEXP === @level_1
       end
   
-      f.write "#{resoure_level} #{$1}[#{$2}?ignore_this=#{SecureRandom.uuid}]"
+      f.write "#{resource_level} #{$1}[#{$2}?ignore_this=#{SecureRandom.uuid}]"
       f.write "#{action_level} #{@action}\n\n"
 
       # Request
