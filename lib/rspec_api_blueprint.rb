@@ -1,8 +1,6 @@
 require "rspec_api_blueprint/version"
 require "rspec_api_blueprint/string_extensions"
 
-RESOURCE_REGEXP = /^(.*)\[(.*)\]/
-
 RSpec.configure do |config|
   config.before(:suite) do
     if defined? Rails
@@ -47,27 +45,23 @@ RSpec.configure do |config|
         if @level_3
           f.write "# #{@level_1}\n\n"
           f.write "## Group #{@level_2}\n\n"
+          f.write "### #{@level_3}\n\n"
         elsif @level_2
           f.write "# Group #{@level_1}\n\n"
+          f.write "## #{@level_2}\n\n"
+        else
+          f.write "# #{@level_1}\n\n"
         end
         $header_written = true
       end
 
-      if @level_3
-        resource_level = '###'
-        action_level = '####'
-        RESOURCE_REGEXP === @level_3
-      elsif @level_2
-        resource_level = '##'
-        action_level = '###'
-        RESOURCE_REGEXP === @level_2
-      else
-        resource_level = '#'
-        action_level = '##'
-        RESOURCE_REGEXP === @level_1
-      end
-  
-      f.write "#{resource_level} #{$1}[#{$2}?ignore_this=#{SecureRandom.uuid}]\n\n"
+      action_level =  if @level_3
+                        '####'
+                      elsif @level_2
+                        '###'
+                      else
+                        '##'
+                      end
       f.write "#{action_level} #{@action}\n\n"
 
       # Request
