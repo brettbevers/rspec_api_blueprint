@@ -67,7 +67,7 @@ RSpec.configure do |config|
         RESOURCE_REGEXP === @level_1
       end
   
-      f.write "#{resource_level} #{$1}[#{$2}?ignore_this=#{SecureRandom.uuid}]"
+      f.write "#{resource_level} #{$1}[#{$2}?ignore_this=#{SecureRandom.uuid}]\n\n"
       f.write "#{action_level} #{@action}\n\n"
 
       # Request
