@@ -32,11 +32,15 @@ class NestedHash < Hash
   end
 
   def set_path(*keys, value)
-    key = keys.compact!.shift
-    if self[key].is_a?(NestedHash)
-      self[key].set_path(keys, value)
+    keys.compact!
+    raise PathError, "no path given" if keys.empty?
+    key = keys.shift
+    if keys.empty?
+      self[key] = value
+    elsif self[key].is_a?(NestedHash)
+      self[key].set_path(*keys, value)
     else
-      raise PathError, "#{key}:#{self[key]} is not a nested hash"
+      raise PathError, "#{key} : #{self[key]} is not a nested hash"
     end
   end
 

@@ -36,9 +36,7 @@ module DocumentationBuilder
       case content
         when NestedHash
           sections = []
-
-          keyword = (content.depth == 2) ? 'Group ' : ''
-
+          keyword = (content.depth == 3) ? 'Group ' : ''
           content.each do |k,v|
             sections << "#{'#'*level} #{keyword}#{k}\n\n" + parse(level+1, v)
           end
