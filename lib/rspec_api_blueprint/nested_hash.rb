@@ -40,5 +40,5 @@ class NestedHash < Hash
     end
   end
 
-  class PathError << StandardError; end
+  class PathError < StandardError; end
 end
