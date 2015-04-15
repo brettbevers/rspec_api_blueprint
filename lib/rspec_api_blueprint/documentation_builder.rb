@@ -4,9 +4,9 @@ module DocumentationBuilder
 
   def self.build(api_blueprint)
     if Dir.exists?(file_root)
-      Dir.mkdir(file_root)
-    else
       Dir.glob(File.join(file_root, '*')).each { |f| File.delete(f) }
+    else
+      Dir.mkdir(file_root)
     end
 
     api_blueprint.each do |title, content|

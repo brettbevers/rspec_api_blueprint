@@ -37,28 +37,28 @@ RSpec.configure do |config|
     # Request
     request_body = request.body.read
     if request_body.present?
-      doc += "+ Request (#{request.content_type})\n\n"
+      doc << "+ Request (#{request.content_type})\n\n"
       # Request Body
       if request_body.present? && 'application/json' == request.content_type.to_s
-        doc += "#{JSON.pretty_generate(JSON.parse(request_body))}\n\n".indent(8)
+        doc << "#{JSON.pretty_generate(JSON.parse(request_body))}\n\n".indent(8)
       end
     end
 
     # Response
-    doc += "+ Response #{response.status} (#{response.content_type})\n\n"
+    doc << "+ Response #{response.status} (#{response.content_type})\n\n"
     # Response Headers
-    doc += "+ Headers\n\n".indent(4)
+    doc << "+ Headers\n\n".indent(4)
     response.headers.each do |k, v|
       next if /Content-Type/i === k
-      doc += "#{k}: #{v.gsub(/\n+/, ' ')}\n\n".indent(12)
+      doc << "#{k}: #{v.gsub(/\n+/, ' ')}\n\n".indent(12)
     end
     # Response Body
-    doc += "+ Body\n\n".indent(4)
+    doc << "+ Body\n\n".indent(4)
     if response.body.present?
       if /application\/json/ === response.content_type.to_s
-        doc += "#{JSON.pretty_generate(JSON.parse(response.body))}\n\n".indent(12)
+        doc << "#{JSON.pretty_generate(JSON.parse(response.body))}\n\n".indent(12)
       else
-        doc += "response.body".indent(12)
+        doc << "response.body".indent(12)
       end
     end
   end

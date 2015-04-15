@@ -1,5 +1,5 @@
 class NestedHash < Hash
-  def new
+  def self.new
     super do |hash, key|
       hash[key] = NestedHash.new
     end
@@ -15,11 +15,11 @@ class NestedHash < Hash
   end
 
   def max_depth
-    1 + map{ |k,v| v.is_a? NestedHash ? v.max_depth : 0 }.max
+    1 + map{ |k,v| v.is_a?(NestedHash) ? v.max_depth : 0 }.max
   end
 
   def min_depth
-    1 + map{ |k,v| v.is_a? NestedHash ? v.min_depth : 0 }.min
+    1 + map{ |k,v| v.is_a?(NestedHash) ? v.min_depth : 0 }.min
   end
 
   def depth
