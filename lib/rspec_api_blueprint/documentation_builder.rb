@@ -1,6 +1,8 @@
-require "rspec_api_blueprint/nested_hash"
+require "rspec_api_blueprint/nested_document"
 
 module DocumentationBuilder
+
+  EXAMPLES_KEY = '__EXAMPLES__'
 
   def self.build(api_blueprint)
     if Dir.exists?(file_root)
@@ -34,8 +36,9 @@ module DocumentationBuilder
 
     def parse(level, content)
       case content
-        when NestedHash
-          sections = []
+        when NestedDocument
+          examples = content.delete(EXAMPLES_KEY).to_s
+          sections = [ examples ]
           keyword = (content.depth == 3) ? 'Group ' : ''
           content.each do |k,v|
             sections << "#{'#'*level} #{keyword}#{k}\n\n" + parse(level+1, v)
