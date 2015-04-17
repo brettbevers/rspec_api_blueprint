@@ -7,7 +7,7 @@ class Example
   attr_reader :example
 
   def levels
-    @levels ||= (1..4).map{ |i| example_groups[-1*i][:description_args].first if example_groups[-1*i] }.compact
+    @levels ||= example_groups.reverse.map{ |example_group| example_group[:description_args].first }.compact
   end
 
   def example_description

@@ -1,11 +1,10 @@
 require "rspec_api_blueprint/version"
 require "rspec_api_blueprint/api_blueprint"
-require "rspec_api_blueprint/example"
 
 RSpec.configure do |config|
 
   config.around(:each, type: :request, api_docs: true) do |example|
-    @example = Example.new(example)
+    @example = example
     example.run
   end
 
