@@ -6,12 +6,7 @@ class NestedDocument < Hash
   end
 
   def +(other)
-    case other
-      when String
-        other.clone
-      else
-        super
-    end
+    other.clone
   end
 
   def to_s
@@ -19,10 +14,12 @@ class NestedDocument < Hash
   end
 
   def max_depth
+    return 0 if empty?
     1 + map{ |k,v| v.is_a?(NestedDocument) ? v.max_depth : 0 }.max
   end
 
   def min_depth
+    return 0 if empty?
     1 + map{ |k,v| v.is_a?(NestedDocument) ? v.min_depth : 0 }.min
   end
 
@@ -37,13 +34,12 @@ class NestedDocument < Hash
 
   def path_set(*keys, value)
     keys = keys.clone
-    keys.compact!
     raise PathError, "no path given" if keys.empty?
     key = keys.shift
     if keys.empty?
       self[key] = value
     elsif self[key].is_a? NestedDocument
-      self[key].set_path(*keys, value)
+      self[key].path_set(*keys, value)
     else
       raise PathError, "#{key} : #{self[key]} is not a nested hash"
     end
@@ -51,13 +47,12 @@ class NestedDocument < Hash
 
   def path_get(*keys)
     keys = keys.clone
-    keys.compact!
     raise PathError, "no path given" if keys.empty?
     key = keys.shift
     if keys.empty?
       return self[key]
     elsif self[key].is_a? NestedDocument
-      self[key].get_path(keys)
+      self[key].path_get(*keys)
     else
       raise PathError, "#{key} : #{self[key]} is not a nested hash"
     end

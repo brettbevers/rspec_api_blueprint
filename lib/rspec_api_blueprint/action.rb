@@ -9,12 +9,14 @@ class Action
       /warden/
   ]
 
-  def initialize(request, response)
+  def initialize(request, response, description, additional_headers)
     @request = request
     @response = response
+    @description = description
+    @additional_headers = additional_headers.is_a?(Hash) ? additional_headers : Hash.new
   end
 
-  attr_reader :request, :response
+  attr_reader :request, :response, :description, :additional_headers
 
   def to_blueprint
     request_part + response_part
@@ -25,10 +27,9 @@ class Action
   def request_part
     doc = String.new
     return doc unless request
-    doc << "+ Request (#{request.content_type})\n\n"
+    doc << "+ Request #{description} (#{request.content_type})\n\n"
     doc << "+ Headers\n\n".indent(4)
-    request.headers.each do |k, v|
-      next unless include_header?(k,v)
+    request_headers.each do |k, v|
       doc << "#{k}: #{v.gsub(/\n+/, ' ')}\n\n".indent(12)
     end
     doc << "+ Body\n\n".indent(4)
@@ -66,5 +67,9 @@ class Action
   def include_header?(field, value)
     field_blacklisted = HEADER_FIELD_BLACKLIST.inject(false) { |a,b| a or b === field }
     !field_blacklisted && value.is_a?(String) && value.present?
+  end
+
+  def request_headers
+    request.headers.select{ |k,v| include_header?(k,v) }.merge(additional_headers)
   end
 end
