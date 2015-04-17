@@ -1,5 +1,7 @@
 class Example
 
+  ACTION_REGEXP = /\[(GET|HEAD|POST|PUT|DELETE|TRACE|OPTIONS|CONNECT|PATCH)\]/i
+
   def initialize(example)
     @example = example
   end
@@ -7,10 +9,13 @@ class Example
   attr_reader :example
 
   def levels
-    @levels ||= example_groups.reverse.map{ |example_group| example_group[:description_args].first }.compact
+    @levels ||=
+        example_groups.reverse.
+            map{ |group| group[:description_args].first }.
+            take_while{ |description| !(ACTION_REGEXP === description)  }
   end
 
-  def example_description
+  def description
     example.description
   end
 
@@ -29,4 +34,5 @@ class Example
       end
     end
   end
+
 end

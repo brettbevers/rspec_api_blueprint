@@ -38,7 +38,7 @@ class Action
       if 'application/json' == request.content_type.to_s
         doc << "#{JSON.pretty_generate(JSON.parse(request_body))}\n\n".indent(12)
       else
-        doc << request_body.indent(12)
+        doc << request_body.indent(12) + "\n\n"
       end
     end
     doc
@@ -58,7 +58,7 @@ class Action
       if 'application/json' == response.content_type.to_s
         doc << "#{JSON.pretty_generate(JSON.parse(response.body))}\n\n".indent(12)
       else
-        doc << response.body.indent(12)
+        doc << response.body.indent(12) + "\n\n"
       end
     end
     doc
