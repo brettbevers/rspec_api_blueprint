@@ -9,10 +9,10 @@ class Example
   attr_reader :example
 
   def levels
-    @levels ||=
-        example_groups.reverse.
-            map{ |group| group[:description_args].first }.
-            take_while{ |description| !(ACTION_REGEXP === description)  }
+    return @levels if @levels
+    all_levels = example_groups.reverse.map{ |group| group[:description_args].first }
+    index = all_levels.find_index{ |description| ACTION_REGEXP === description }
+    @levels = all_levels[0..index]
   end
 
   def description
