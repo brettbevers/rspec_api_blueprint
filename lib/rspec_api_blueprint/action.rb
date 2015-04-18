@@ -72,6 +72,6 @@ class Action
   def request_headers
     request.headers.select{ |k,v| include_header?(k,v) }.
         merge(additional_headers).
-        merge(BLUEPRINT_EXAMPLE: description)
+        merge(blueprint_example: description)
   end
 end
