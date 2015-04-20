@@ -10,9 +10,8 @@ class Example
 
   def levels
     return @levels if @levels
-    all_levels = example_groups.reverse.map{ |group| group[:description_args].first }
-    index = all_levels.find_index{ |description| ACTION_REGEXP === description }
-    @levels = all_levels[0..index]
+    index = group_descriptions.find_index{ |description| ACTION_REGEXP === description }
+    @levels = group_descriptions[0..index]
   end
 
   def description
@@ -25,14 +24,8 @@ class Example
 
   private
 
-  def example_groups
-    @example_groups ||= Array.new.tap do |example_groups|
-      example_group = example.metadata[:example_group]
-      while example_group
-        example_groups << example_group
-        example_group = example_group[:example_group]
-      end
-    end
+  def group_descriptions
+    @group_descriptions ||= example.example_group.parent_groups.map{ |i| i.metadata[:description] }.reverse
   end
 
 end
