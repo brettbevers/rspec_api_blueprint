@@ -1,5 +1,6 @@
 require "rspec_api_blueprint/version"
 require "rspec_api_blueprint/api_blueprint"
+require "rspec/rails"
 
 RSpec.configure do |config|
 
