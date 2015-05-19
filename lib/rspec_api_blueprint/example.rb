@@ -11,7 +11,7 @@ class Example
   def levels
     return @levels if @levels
     index = group_descriptions.find_index{ |description| ACTION_REGEXP === description }
-    @levels = group_descriptions[0..index]
+    @levels = index ? group_descriptions[0..index] : []
   end
 
   def description
