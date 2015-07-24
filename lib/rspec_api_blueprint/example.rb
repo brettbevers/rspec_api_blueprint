@@ -1,6 +1,6 @@
 class Example
 
-  ACTION_REGEXP = /\[(GET|HEAD|POST|PUT|DELETE|TRACE|OPTIONS|CONNECT|PATCH)\]/i
+  ACTION_REGEXP = /\[\s*(GET|HEAD|POST|PUT|DELETE|TRACE|OPTIONS|CONNECT|PATCH)(\s+.*)?\]/i
 
   def initialize(example)
     @example = example
